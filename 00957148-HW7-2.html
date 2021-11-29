@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Local Storage</title>
+    <style type="text/CSS">
+        table {
+            width: 90%;
+            border-collapse: collapse;
+            background-color: lightblue;
+            font-family: Perpetua;
+        }
+
+        table, td, th {
+            border: 1px solid black;
+            padding: 4px;
+        }
+
+        th {
+            text-align: center;
+            color: white;
+            background-color: darkblue;
+        }
+
+        tr.oddrow {
+            background-color: white;
+        }
+
+        td {
+            text-align: center;
+        }
+    </style>
+    <script type="text/javascript">
+        var info={
+            title:"",
+            author:"",
+            year:"",
+            url:""
+        };
+        let add,remove;
+        let tbpre="<table><tr><th>Title</th><th>Author</th><th>Year</th><th>URL</th></tr>";
+        let tbpo="</table>";
+        let tbobj;
+        function start()
+        {
+            add=document.getElementById("addButton");
+            remove=document.getElementById("removeAllButton");
+            add.addEventListener("click",addinfo,false);
+            remove.addEventListener("click",removeinfo,false);
+            tbobj=document.getElementById("display");
+            show();
+        }
+        function addinfo()
+        {
+            info.title=document.getElementById("title").value;
+            info.author=document.getElementById("author").value;
+            info.year=document.getElementById("year").value;
+            info.url=document.getElementById("url").value;
+            let time=new Date();
+            localStorage.setItem("ntou-"+time.getTime(),JSON.stringify(info));
+            show();
+        }
+        function removeinfo()
+        {
+            let length=localStorage.length;
+            let books=[];
+            for(let i=0;i<length;i++)
+            {
+                if(localStorage.key(i).startsWith("ntou"))
+                   books[i]=localStorage.key(i);
+            }
+            for(let book in books)
+            {
+                localStorage.removeItem(books[book]);
+            }
+            window.alert("All items were removed!");
+            show();
+        }
+        function show()
+        {
+            let length = localStorage.length; 
+            let books = []; 
+            for (let i = 0; i < length; ++i) 
+            {
+                if(localStorage.key(i).startsWith("ntou"))
+                    books[i] = localStorage.key(i);
+            }
+            let tb="";
+            let count=0;
+            for (let book in books)
+            {
+                let info_t=JSON.parse(localStorage.getItem(books[book]));
+                let ul="<a href='"+info_t.url+"' target='_blank'>";
+                    if(count%2==0)
+                    {
+                        tb+="<tr><td>"+info_t.title+"</td>\
+                                            <td>"+info_t.author+"</td>\
+                                            <td>"+info_t.year+"</td>\
+                                            <td>"+ul+info_t.url+"</a></td></tr>"
+                    }
+                    else
+                    {
+                        
+                        tb+="<tr class='oddrow'><td>"+info_t.title+"</td>\
+                                            <td>"+info_t.author+"</td>\
+                                            <td>"+info_t.year+"</td>\
+                                            <td>"+ul+info_t.url+"</a></td></tr>"
+                    }
+                    count+=1;
+            }
+            tbobj.innerHTML=tbpre+tb+tbpo;
+        }
+        window.addEventListener("load",start,false);
+    </script>
+</head>
+
+<body>
+    <p><a href="">GitHub Link</a></p>
+    <form action="#">
+        <p>
+            <label>Book Title: <input  type="text" id="title"> </label>
+            <label>Author(s): <input  type="text" id="author"></label>
+            <label>Year: <input  type="number" id="year"></label>
+            <label>Book URL: <input  type="URL" id="url"></label>
+        </p>
+        <p>
+            <input type="button" value="Add New Item" id="addButton">
+            <input type="button" value="Remove All Items" id="removeAllButton">
+        </p>
+    </form>
+    <hr>
+    <div id="display">
+    </div>
+</body>
+
+</html>
